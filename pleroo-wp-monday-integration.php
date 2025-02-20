@@ -62,7 +62,11 @@ register_deactivation_hook( __FILE__, 'deactivate_pleroo_wp_monday_integration' 
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-pleroo-wp-monday-integration.php';
+$class_file = plugin_dir_path( __FILE__ ) . 'includes/class-pleroo-wp-monday-integration.php';
+if (!file_exists($class_file)) {
+    wp_die('Critical Error: Required file ' . $class_file . ' is missing.');
+}
+require_once $class_file;
 
 /**
  * Begins execution of the plugin.
@@ -74,6 +78,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-pleroo-wp-monday-integrati
  * @since      0.0.3
  */
 function run_pleroo_wp_monday_integration() {
+    if (!class_exists('Pleroo_Wp_Monday_Integration')) {
+        wp_die('Critical Error: Pleroo_Wp_Monday_Integration class not found.');
+    }
+    
     // Create plugin instance and run it
     $plugin = new Pleroo_Wp_Monday_Integration();
     $plugin->run();
