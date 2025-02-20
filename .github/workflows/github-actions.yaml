@@ -1,0 +1,85 @@
+name: Create Release and Update Version
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+  packages: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+        
+      - name: Get latest release version
+        id: get_version
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          CURRENT_VERSION=${LATEST_TAG#v}
+          IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+          MAJOR=${VERSION_PARTS[0]}
+          MINOR=${VERSION_PARTS[1]}
+          PATCH=$((VERSION_PARTS[2] + 1))
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
+          # Modern way to set output
+          echo "new_version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Update version numbers
+        run: |
+          # Update version in main plugin file header and constant
+          sed -i "s/Version:.*[0-9]\+\.[0-9]\+\.[0-9]\+/Version:           ${{ env.NEW_VERSION }}/" wp-plugin-template.php
+          sed -i "s/define( 'WP_PLUGIN_TEMPLATE_VERSION', '.*' )/define( 'WP_PLUGIN_TEMPLATE_VERSION', '${{ env.NEW_VERSION }}' )/" wp-plugin-template.php
+          
+          # Update version in class file comments and fallback
+          sed -i "s/@since.*[0-9]\+\.[0-9]\+\.[0-9]\+/@since      ${{ env.NEW_VERSION }}/" includes/class-wp-plugin-template.php
+          sed -i "s/\$this->version = '[0-9]\+\.[0-9]\+\.[0-9]\+';/\$this->version = '${{ env.NEW_VERSION }}';/" includes/class-wp-plugin-template.php
+          
+          # Update update-info.json with correct download URL structure
+          jq --arg version "${{ env.NEW_VERSION }}" --arg package "https://github.com/alecells123/WP-Plugin-Template/releases/download/v${{ env.NEW_VERSION }}/wp-plugin-template.zip" '.version = $version | .new_version = $version | .package = $package' update-info.json > temp.json && mv temp.json update-info.json
+
+      - name: Create ZIP excluding .distignore files
+        run: |
+          if [ -f .distignore ]; then
+            EXCLUDE_ARGS=$(cat .distignore | sed 's/^/-x "/g' | sed 's/$/"/' | tr '\n' ' ')
+            zip -r "wp-plugin-template.zip" . $EXCLUDE_ARGS
+          else
+            zip -r "wp-plugin-template.zip" . -x "*.git*" "*.github*" "releases/*"
+          fi
+          # Debug: List files in directory
+          ls -la
+          # Debug: Check ZIP contents
+          unzip -l "wp-plugin-template.zip"
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: wp-plugin-template.zip  # Updated path
+          tag_name: v${{ env.NEW_VERSION }}
+          name: Release v${{ env.NEW_VERSION }}
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_unmatched_files: true
+
+      - name: Commit update-info.json changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add update-info.json
+          git commit -m "Update version to v${{ env.NEW_VERSION }}"
+          git push
