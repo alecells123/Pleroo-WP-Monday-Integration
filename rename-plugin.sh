@@ -3,7 +3,7 @@
 # Function to show usage
 show_usage() {
     echo "Usage: $0 <new-plugin-name> <new-plugin-url> <new-plugin-author> <new-plugin-author-url>"
-    echo "Example: $0 \"My Awesome Plugin\" \"https://github.com/username/my-awesome-plugin\" \"John Doe\" \"https://github.com/username\""
+    echo "Example: $0 \"My Awesome Plugin\" \"https://github.com/username/My-Awesome-Plugin\" \"John Doe\" \"https://github.com/username\""
     exit 1
 }
 
@@ -38,10 +38,27 @@ process_file() {
         sed -i "s/wp-plugin-template/$SLUG/g" "$file"
         sed -i "s/wp_plugin_template/$UNDERSCORE/g" "$file"
         
-        # Replace author and URLs
-        sed -i "s|https://github.com/alecells123|$NEW_PLUGIN_URL|g" "$file"
+        # Replace author and URLs - updated to handle GitHub paths correctly
+        sed -i "s|https://github.com/alecells123/WP-Plugin-Template|$NEW_PLUGIN_URL|g" "$file"
+        sed -i "s|https://github.com/alecells123|$NEW_PLUGIN_AUTHOR_URL|g" "$file"
         sed -i "s|Alec Ellsworth|$NEW_PLUGIN_AUTHOR|g" "$file"
-        sed -i "s|https://https://github.com/alecells123/|$NEW_PLUGIN_AUTHOR_URL|g" "$file"
+        
+        # Handle the raw GitHub URL for update-info.json
+        RAW_GITHUB_URL=$(echo "$NEW_PLUGIN_URL" | sed 's|github.com|raw.githubusercontent.com|')/refs/heads/main
+        sed -i "s|https://raw.githubusercontent.com/alecells123/[^/]*/refs/heads/main|$RAW_GITHUB_URL|g" "$file"
+
+        # Update GitHub Actions workflow file specific replacements
+        if [[ "$file" == *"github-actions.yaml" ]]; then
+            # Update version constant and file paths
+            sed -i "s/WP_PLUGIN_TEMPLATE_VERSION/${UNDERSCORE}_VERSION/g" "$file"
+            sed -i "s/wp-plugin-template\.php/$SLUG.php/g" "$file"
+            sed -i "s/class-wp-plugin-template\.php/class-$SLUG.php/g" "$file"
+            sed -i "s/wp-plugin-template\.zip/$SLUG.zip/g" "$file"
+            
+            # Update GitHub repository paths in workflow
+            REPO_NAME=$(echo "$NEW_PLUGIN_URL" | sed 's|.*/||')
+            sed -i "s|alecells123/WP-Plugin-Template|$NEW_PLUGIN_AUTHOR_URL/$REPO_NAME|g" "$file"
+        fi
 
         # Reset version numbers
         sed -i "s/Version:.*[0-9]\+\.[0-9]\+\.[0-9]\+/Version:           0.0.0/" "$file"
