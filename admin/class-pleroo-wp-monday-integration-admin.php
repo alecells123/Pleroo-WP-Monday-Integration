@@ -4,7 +4,7 @@
  * The admin-specific functionality of the plugin.
  *
  * @link       https://https://github.com/alecells123
- * @since      1.0.0
+ * @since      0.0.2
  *
  * @package    Wp_Plugin_Template
  * @subpackage Wp_Plugin_Template/admin
@@ -20,12 +20,12 @@
  * @subpackage Wp_Plugin_Template/admin
  * @author     Alec Ellsworth <alecellsworth1@gmail.com>
  */
-class Wp_Plugin_Template_Admin {
+class PlerooWPMondayIntegration_Admin {
 
 	/**
 	 * The ID of this plugin.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   private
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
@@ -34,7 +34,7 @@ class Wp_Plugin_Template_Admin {
 	/**
 	 * The version of this plugin.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   private
 	 * @var      string    $version    The current version of this plugin.
 	 */
@@ -43,7 +43,7 @@ class Wp_Plugin_Template_Admin {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @param      string    $plugin_name       The name of this plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
@@ -59,7 +59,7 @@ class Wp_Plugin_Template_Admin {
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 */
 	public function enqueue_styles() {
 
@@ -75,14 +75,14 @@ class Wp_Plugin_Template_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-plugin-template-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/pleroo-wp-monday-integration-admin.css', array(), $this->version, 'all' );
 
 	}
 
 	/**
 	 * Register the JavaScript for the admin area.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 */
 	public function enqueue_scripts() {
 
@@ -98,7 +98,7 @@ class Wp_Plugin_Template_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-plugin-template-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/pleroo-wp-monday-integration-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 
@@ -110,7 +110,7 @@ class Wp_Plugin_Template_Admin {
 			'Plugin Settings', // Page title
 			'My Plugin', // Menu title
 			'manage_options', // Capability
-			'wp-plugin-template', // Menu slug
+			'pleroo-wp-monday-integration', // Menu slug
 			array($this, 'display_plugin_admin_page'), // Function to output the content
 			'dashicons-admin-generic', // Icon (you can change this)
 			100 // Position

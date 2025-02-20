@@ -20,7 +20,7 @@
  * https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecomment-28541913
  *
  * @link       https://https://github.com/alecells123
- * @since      1.0.0
+ * @since      0.0.2
  *
  * @package    Wp_Plugin_Template
  */

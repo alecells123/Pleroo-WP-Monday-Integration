@@ -5,7 +5,7 @@
 class PluginTest extends WP_UnitTestCase {
 
     public function test_plugin_initialized() {
-        $this->assertTrue( class_exists( 'WP_Plugin_Template' ) );
+        $this->assertTrue( class_exists( 'PlerooWPMondayIntegration' ) );
     }
 
     public function test_admin_menu_exists() {

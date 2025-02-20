@@ -55,7 +55,7 @@ you put the stable version, in order to eliminate any doubt.
 
 ## Directory Structure
 
-wp-plugin-template/
+pleroo-wp-monday-integration/
 ├── admin/ # Admin interface files
 ├── examples/
 │ └── api/ # API usage examples
@@ -109,7 +109,7 @@ See individual example files for detailed documentation.
 ## Deployment
 
 1. Update version numbers in:
-   - wp-plugin-template.php
+   - pleroo-wp-monday-integration.php
    - update-info.json
 
 2. Push to main/master branch

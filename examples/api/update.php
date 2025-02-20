@@ -4,7 +4,7 @@
  */
 
 $item_id = 123;
-$response = wp_remote_request( "http://your-site.com/wp-json/wp-plugin-template/v1/items/{$item_id}", array(
+$response = wp_remote_request( "http://your-site.com/wp-json/pleroo-wp-monday-integration/v1/items/{$item_id}", array(
     'method' => 'PUT',
     'headers' => array(
         'Content-Type' => 'application/json',

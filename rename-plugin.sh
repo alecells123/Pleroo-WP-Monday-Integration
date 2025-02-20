@@ -23,50 +23,10 @@ NEW_PLUGIN_AUTHOR_URL="$4"
 SLUG=$(echo "$NEW_PLUGIN_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
 # "my-awesome-plugin" -> "my_awesome_plugin"
 UNDERSCORE=$(echo "$SLUG" | sed 's/-/_/g')
-# "my-awesome-plugin" -> "MyAwesomePlugin"
-CAMELCASE=$(echo "$NEW_PLUGIN_NAME" | sed -r 's/([[:blank:]]|^)([[:alpha:]])/\U\2/g' | sed 's/ //g')
+# "My Awesome Plugin" -> "MyAwesomePlugin"
+CAMELCASE=$(echo "$NEW_PLUGIN_NAME" | perl -pe 's/(^|[\s-])\w/\U$&/g' | sed 's/[[:space:]-]//g')
 
 echo "Converting WP Plugin Template to $NEW_PLUGIN_NAME..."
-
-# Function to perform replacements in a file
-process_file() {
-    local file="$1"
-    if [ -f "$file" ]; then
-        # Replace various formats of the plugin name
-        sed -i "s/WP Plugin Template/$NEW_PLUGIN_NAME/g" "$file"
-        sed -i "s/WP_Plugin_Template/$CAMELCASE/g" "$file"
-        sed -i "s/wp-plugin-template/$SLUG/g" "$file"
-        sed -i "s/wp_plugin_template/$UNDERSCORE/g" "$file"
-        
-        # Replace author and URLs - updated to handle GitHub paths correctly
-        sed -i "s|https://github.com/alecells123/WP-Plugin-Template|$NEW_PLUGIN_URL|g" "$file"
-        sed -i "s|https://github.com/alecells123|$NEW_PLUGIN_AUTHOR_URL|g" "$file"
-        sed -i "s|Alec Ellsworth|$NEW_PLUGIN_AUTHOR|g" "$file"
-        
-        # Handle the raw GitHub URL for update-info.json
-        RAW_GITHUB_URL=$(echo "$NEW_PLUGIN_URL" | sed 's|github.com|raw.githubusercontent.com|')/refs/heads/main
-        sed -i "s|https://raw.githubusercontent.com/alecells123/[^/]*/refs/heads/main|$RAW_GITHUB_URL|g" "$file"
-
-        # Update GitHub Actions workflow file specific replacements
-        if [[ "$file" == *"github-actions.yaml" ]]; then
-            # Update version constant and file paths
-            sed -i "s/WP_PLUGIN_TEMPLATE_VERSION/${UNDERSCORE}_VERSION/g" "$file"
-            sed -i "s/wp-plugin-template\.php/$SLUG.php/g" "$file"
-            sed -i "s/class-wp-plugin-template\.php/class-$SLUG.php/g" "$file"
-            sed -i "s/wp-plugin-template\.zip/$SLUG.zip/g" "$file"
-            
-            # Update GitHub repository paths in workflow
-            REPO_NAME=$(echo "$NEW_PLUGIN_URL" | sed 's|.*/||')
-            sed -i "s|alecells123/WP-Plugin-Template|$NEW_PLUGIN_AUTHOR_URL/$REPO_NAME|g" "$file"
-        fi
-
-        # Reset version numbers
-        sed -i "s/Version:.*[0-9]\+\.[0-9]\+\.[0-9]\+/Version:           0.0.0/" "$file"
-        sed -i "s/define( '.*_VERSION', '[0-9]\+\.[0-9]\+\.[0-9]\+' )/define( '${UNDERSCORE}_VERSION', '0.0.0' )/" "$file"
-        sed -i "s/@since.*[0-9]\+\.[0-9]\+\.[0-9]\+/@since      0.0.0/" "$file"
-        sed -i "s/\$this->version = '[0-9]\+\.[0-9]\+\.[0-9]\+';/\$this->version = '0.0.0';/" "$file"
-    fi
-}
 
 # Create initial update-info.json with version 0.0.0
 cat > update-info.json << EOL
@@ -78,8 +38,18 @@ cat > update-info.json << EOL
 }
 EOL
 
-# Rename files and directories
-find . -depth -name "*wp-plugin-template*" -execdir bash -c '
+# Rename files and directories more thoroughly
+find . -depth -type f \( -name "*wp-plugin-template*" -o -name "*class-wp-plugin-template*" \) -execdir bash -c '
+    old="${1#./}"
+    new="${old//wp-plugin-template/'$SLUG'}"
+    new="${new//class-wp-plugin-template/class-'$SLUG'}"
+    if [ "$old" != "$new" ]; then
+        mv "$old" "$new"
+    fi
+' bash {} \;
+
+# Also rename directories
+find . -depth -type d -name "*wp-plugin-template*" -execdir bash -c '
     old="${1#./}"
     new="${old//wp-plugin-template/'$SLUG'}"
     if [ "$old" != "$new" ]; then
@@ -87,19 +57,37 @@ find . -depth -name "*wp-plugin-template*" -execdir bash -c '
     fi
 ' bash {} \;
 
-# Process all files
-find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec bash -c '
-    process_file "$0"
-' {} \;
+# Process all files - using perl instead of sed for better compatibility
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s/WP Plugin Template/$NEW_PLUGIN_NAME/g" {} \;
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s/WP_Plugin_Template/$CAMELCASE/g" {} \;
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s/wp-plugin-template/$SLUG/g" {} \;
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s/wp_plugin_template/$UNDERSCORE/g" {} \;
 
-# Update the main plugin file
-if [ -f "$SLUG.php" ]; then
-    # Update plugin header information
-    sed -i "s/Plugin Name: .*$/Plugin Name: $NEW_PLUGIN_NAME/" "$SLUG.php"
-    sed -i "s|Plugin URI: .*$|Plugin URI: $NEW_PLUGIN_URL|" "$SLUG.php"
-    sed -i "s|Author: .*$|Author: $NEW_PLUGIN_AUTHOR|" "$SLUG.php"
-    sed -i "s|Author URI: .*$|Author URI: $NEW_PLUGIN_AUTHOR_URL|" "$SLUG.php"
+# Process PHP files specifically
+find . -type f -name "*.php" -exec perl -pi -e "s/class Wp_Plugin_Template/class $CAMELCASE/g" {} \;
+find . -type f -name "*.php" -exec perl -pi -e "s/extends Wp_Plugin_Template/extends $CAMELCASE/g" {} \;
+find . -type f -name "*.php" -exec perl -pi -e "s/new Wp_Plugin_Template/new $CAMELCASE/g" {} \;
+
+# Replace author and URLs
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s|https://github.com/alecells123/WP-Plugin-Template|$NEW_PLUGIN_URL|g" {} \;
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s|https://github.com/alecells123|$NEW_PLUGIN_AUTHOR_URL|g" {} \;
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s|Alec Ellsworth|$NEW_PLUGIN_AUTHOR|g" {} \;
+
+# Update GitHub Actions workflow
+if [ -f ".github/workflows/github-actions.yaml" ]; then
+    perl -pi -e "s/WP_PLUGIN_TEMPLATE_VERSION/${UNDERSCORE}_VERSION/g" .github/workflows/github-actions.yaml
+    perl -pi -e "s/wp-plugin-template\.php/$SLUG.php/g" .github/workflows/github-actions.yaml
+    perl -pi -e "s/class-wp-plugin-template\.php/class-$SLUG.php/g" .github/workflows/github-actions.yaml
+    perl -pi -e "s/wp-plugin-template\.zip/$SLUG.zip/g" .github/workflows/github-actions.yaml
+    REPO_NAME=$(echo "$NEW_PLUGIN_URL" | sed 's|.*/||')
+    perl -pi -e "s|alecells123/WP-Plugin-Template|$NEW_PLUGIN_AUTHOR_URL/$REPO_NAME|g" .github/workflows/github-actions.yaml
 fi
+
+# Reset version numbers
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s/Version:.*[0-9]+\.[0-9]+\.[0-9]+/Version:           0.0.0/g" {} \;
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s/define\( '.*_VERSION', '[0-9]+\.[0-9]+\.[0-9]+' \)/define( '${UNDERSCORE}_VERSION', '0.0.0' )/g" {} \;
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s/\@since.*[0-9]+\.[0-9]+\.[0-9]+/\@since      0.0.0/g" {} \;
+find . -type f -not -path "*/\.*" -not -name "rename-plugin.sh" -exec perl -pi -e "s/\$this->version = '[0-9]+\.[0-9]+\.[0-9]+';/\$this->version = '0.0.0';/g" {} \;
 
 echo "Plugin conversion complete!"
 echo "New plugin details:"

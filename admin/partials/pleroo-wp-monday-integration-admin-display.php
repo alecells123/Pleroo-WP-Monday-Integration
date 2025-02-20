@@ -6,7 +6,7 @@
  * This file is used to markup the admin-facing aspects of the plugin.
  *
  * @link       https://https://github.com/alecells123
- * @since      1.0.0
+ * @since      0.0.2
  *
  * @package    Wp_Plugin_Template
  * @subpackage Wp_Plugin_Template/admin/partials

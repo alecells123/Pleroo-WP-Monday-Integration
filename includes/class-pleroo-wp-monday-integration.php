@@ -7,7 +7,7 @@
  * public-facing side of the site and the admin area.
  *
  * @link       https://https://github.com/alecells123
- * @since      1.0.0
+ * @since      0.0.2
  *
  * @package    Wp_Plugin_Template
  * @subpackage Wp_Plugin_Template/includes
@@ -22,18 +22,18 @@
  * Also maintains the unique identifier of this plugin as well as the current
  * version of the plugin.
  *
- * @since      1.0.0
+ * @since      0.0.2
  * @package    Wp_Plugin_Template
  * @subpackage Wp_Plugin_Template/includes
  * @author     Alec Ellsworth <alecellsworth1@gmail.com>
  */
-class Wp_Plugin_Template {
+class PlerooWPMondayIntegration {
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   protected
 	 * @var      Wp_Plugin_Template_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
@@ -42,7 +42,7 @@ class Wp_Plugin_Template {
 	/**
 	 * The unique identifier of this plugin.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   protected
 	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
 	 */
@@ -51,7 +51,7 @@ class Wp_Plugin_Template {
 	/**
 	 * The current version of the plugin.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   protected
 	 * @var      string    $version    The current version of the plugin.
 	 */
@@ -64,15 +64,15 @@ class Wp_Plugin_Template {
 	 * Load the dependencies, define the locale, and set the hooks for the admin area and
 	 * the public-facing side of the site.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 */
 	public function __construct() {
 		if ( defined( 'WP_PLUGIN_TEMPLATE_VERSION' ) ) {
 			$this->version = WP_PLUGIN_TEMPLATE_VERSION;
 		} else {
-			$this->version = '0.0.0';
+			$this->version = '0.0.2';
 		}
-		$this->plugin_name = 'wp-plugin-template';
+		$this->plugin_name = 'pleroo-wp-monday-integration';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -94,7 +94,7 @@ class Wp_Plugin_Template {
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   private
 	 */
 	private function load_dependencies() {
@@ -103,26 +103,26 @@ class Wp_Plugin_Template {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-plugin-template-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-pleroo-wp-monday-integration-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-plugin-template-i18n.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-pleroo-wp-monday-integration-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-wp-plugin-template-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-pleroo-wp-monday-integration-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-wp-plugin-template-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-pleroo-wp-monday-integration-public.php';
 
-		$this->loader = new Wp_Plugin_Template_Loader();
+		$this->loader = new PlerooWPMondayIntegration_Loader();
 
 	}
 
@@ -132,12 +132,12 @@ class Wp_Plugin_Template {
 	 * Uses the Wp_Plugin_Template_i18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   private
 	 */
 	private function set_locale() {
 
-		$plugin_i18n = new Wp_Plugin_Template_i18n();
+		$plugin_i18n = new PlerooWPMondayIntegration_i18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 
@@ -147,12 +147,12 @@ class Wp_Plugin_Template {
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Wp_Plugin_Template_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new PlerooWPMondayIntegration_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -163,12 +163,12 @@ class Wp_Plugin_Template {
 	 * Register all of the hooks related to the public-facing functionality
 	 * of the plugin.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   private
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Wp_Plugin_Template_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new PlerooWPMondayIntegration_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -178,7 +178,7 @@ class Wp_Plugin_Template {
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 */
 	public function run() {
 		$this->loader->run();
@@ -188,7 +188,7 @@ class Wp_Plugin_Template {
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
-	 * @since     1.0.0
+	 * @since      0.0.2
 	 * @return    string    The name of the plugin.
 	 */
 	public function get_plugin_name() {
@@ -198,7 +198,7 @@ class Wp_Plugin_Template {
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
-	 * @since     1.0.0
+	 * @since      0.0.2
 	 * @return    Wp_Plugin_Template_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
@@ -208,7 +208,7 @@ class Wp_Plugin_Template {
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @since     1.0.0
+	 * @since      0.0.2
 	 * @return    string    The version number of the plugin.
 	 */
 	public function get_version() {

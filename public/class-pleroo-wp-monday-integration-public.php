@@ -4,7 +4,7 @@
  * The public-facing functionality of the plugin.
  *
  * @link       https://https://github.com/alecells123
- * @since      1.0.0
+ * @since      0.0.2
  *
  * @package    Wp_Plugin_Template
  * @subpackage Wp_Plugin_Template/public
@@ -20,12 +20,12 @@
  * @subpackage Wp_Plugin_Template/public
  * @author     Alec Ellsworth <alecellsworth1@gmail.com>
  */
-class Wp_Plugin_Template_Public {
+class PlerooWPMondayIntegration_Public {
 
 	/**
 	 * The ID of this plugin.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   private
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
@@ -34,7 +34,7 @@ class Wp_Plugin_Template_Public {
 	/**
 	 * The version of this plugin.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @access   private
 	 * @var      string    $version    The current version of this plugin.
 	 */
@@ -43,7 +43,7 @@ class Wp_Plugin_Template_Public {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
@@ -57,7 +57,7 @@ class Wp_Plugin_Template_Public {
 	/**
 	 * Register the stylesheets for the public-facing side of the site.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 */
 	public function enqueue_styles() {
 
@@ -73,14 +73,14 @@ class Wp_Plugin_Template_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-plugin-template-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/pleroo-wp-monday-integration-public.css', array(), $this->version, 'all' );
 
 	}
 
 	/**
 	 * Register the JavaScript for the public-facing side of the site.
 	 *
-	 * @since    1.0.0
+	 * @since      0.0.2
 	 */
 	public function enqueue_scripts() {
 
@@ -96,7 +96,7 @@ class Wp_Plugin_Template_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-plugin-template-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/pleroo-wp-monday-integration-public.js', array( 'jquery' ), $this->version, false );
 
 	}
 
