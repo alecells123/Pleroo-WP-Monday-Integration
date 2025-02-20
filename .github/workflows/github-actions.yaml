@@ -55,16 +55,28 @@ jobs:
 
       - name: Create ZIP excluding .distignore files
         run: |
+          # Create a temporary directory with versioned name
+          TEMP_DIR="Pleroo-WP-Monday-Integration-v${{ env.NEW_VERSION }}"
+          mkdir -p "$TEMP_DIR"
+          
+          # Copy files to temp directory, respecting .distignore
           if [ -f .distignore ]; then
-            EXCLUDE_ARGS=$(cat .distignore | sed 's/^/-x "/g' | sed 's/$/"/' | tr '\n' ' ')
-            zip -r "pleroo-wp-monday-integration.zip" . $EXCLUDE_ARGS
+            EXCLUDE_ARGS=$(cat .distignore | sed 's/^/--exclude="/g' | sed 's/$/"/' | tr '\n' ' ')
+            rsync -av . "$TEMP_DIR/" $EXCLUDE_ARGS --exclude=".git" --exclude=".github" --exclude="releases" --exclude="$TEMP_DIR"
           else
-            zip -r "pleroo-wp-monday-integration.zip" . -x "*.git*" "*.github*" "releases/*"
+            rsync -av . "$TEMP_DIR/" --exclude=".git" --exclude=".github" --exclude="releases" --exclude="$TEMP_DIR"
           fi
+          
+          # Create zip from the temp directory
+          zip -r "pleroo-wp-monday-integration.zip" "$TEMP_DIR"
+          
           # Debug: List files in directory
           ls -la
           # Debug: Check ZIP contents
           unzip -l "pleroo-wp-monday-integration.zip"
+          
+          # Cleanup
+          rm -rf "$TEMP_DIR"
 
       - name: Create Release
         id: create_release

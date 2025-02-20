@@ -36,20 +36,20 @@ UNDERSCORE_UPPER=$(echo "$UNDERSCORE" | tr '[:lower:]' '[:upper:]')
 
 # Update main plugin file
 if [ -f "$PLUGIN_SLUG.php" ]; then
-    # Update version in plugin header
-    perl -i -pe "s/Version:\s*\d+\.\d+\.\d+/Version:           $NEW_VERSION/" "$PLUGIN_SLUG.php"
+    # Update version in plugin header - more precise pattern
+    perl -i -pe 's/([ *]*Version:[ ]*)\d+\.\d+\.\d+/$1'"$NEW_VERSION"'/' "$PLUGIN_SLUG.php"
     
-    # Update version constant - exact match to prevent contamination
-    perl -i -pe "s/define\(\s*'PLEROO_WP_MONDAY_INTEGRATION_VERSION',\s*'\d+\.\d+\.\d+'\s*\)/define( 'PLEROO_WP_MONDAY_INTEGRATION_VERSION', '$NEW_VERSION' )/" "$PLUGIN_SLUG.php"
+    # Update version constant - more precise pattern
+    perl -i -pe 's/(define\(\s*'\''PLEROO_WP_MONDAY_INTEGRATION_VERSION'\'',\s*'\'')(\d+\.\d+\.\d+)('\''.*\))/$1'"$NEW_VERSION"'$3/' "$PLUGIN_SLUG.php"
     
-    # Update @since tags
-    perl -i -pe "s/\@since\s*\d+\.\d+\.\d+/\@since      $NEW_VERSION/" "$PLUGIN_SLUG.php"
+    # Update @since tags - more precise pattern
+    perl -i -pe 's/(\@since[ ]*)\d+\.\d+\.\d+/$1'"$NEW_VERSION"'/' "$PLUGIN_SLUG.php"
 fi
 
-# Update version in class files
+# Update version in class files - more precise patterns
 find . -type f -name "class-*.php" | while read -r file; do
-    perl -i -pe "s/\@since\s*\d+\.\d+\.\d+/\@since      $NEW_VERSION/" "$file"
-    perl -i -pe "s/\\\$this->version\s*=\s*'\d+\.\d+\.\d+'/\\\$this->version = '$NEW_VERSION'/" "$file"
+    perl -i -pe 's/(\@since[ ]*)\d+\.\d+\.\d+/$1'"$NEW_VERSION"'/' "$file"
+    perl -i -pe 's/(\$this->version[ ]*=[ ]*'\'')(\d+\.\d+\.\d+)('\''.*?)/$1'"$NEW_VERSION"'$3/' "$file"
 done
 
 # Update update-info.json

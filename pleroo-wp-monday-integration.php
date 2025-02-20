@@ -68,6 +68,11 @@ if (!file_exists($class_file)) {
 }
 require_once $class_file;
 
+// Add class existence check before running the plugin
+if (!class_exists('Pleroo_Wp_Monday_Integration')) {
+    wp_die('Critical Error: Required class Pleroo_Wp_Monday_Integration could not be loaded. Please check that the plugin files are properly installed.');
+}
+
 /**
  * Begins execution of the plugin.
  *
@@ -78,11 +83,6 @@ require_once $class_file;
  * @since      0.0.3
  */
 function run_pleroo_wp_monday_integration() {
-    if (!class_exists('Pleroo_Wp_Monday_Integration')) {
-        wp_die('Critical Error: Pleroo_Wp_Monday_Integration class not found.');
-    }
-    
-    // Create plugin instance and run it
     $plugin = new Pleroo_Wp_Monday_Integration();
     $plugin->run();
 }
