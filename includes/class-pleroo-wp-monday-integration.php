@@ -7,7 +7,7 @@
  * public-facing side of the site and the admin area.
  *
  * @link       https://https://github.com/alecells123
- * @since      0.0.2
+ * @since      
  *
  * @package    Wp_Plugin_Template
  * @subpackage Wp_Plugin_Template/includes
@@ -22,7 +22,7 @@
  * Also maintains the unique identifier of this plugin as well as the current
  * version of the plugin.
  *
- * @since      0.0.2
+ * @since      
  * @package    Wp_Plugin_Template
  * @subpackage Wp_Plugin_Template/includes
  * @author     Alec Ellsworth <alecellsworth1@gmail.com>
@@ -33,7 +33,7 @@ class PlerooWPMondayIntegration {
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @access   protected
 	 * @var      Wp_Plugin_Template_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
@@ -42,7 +42,7 @@ class PlerooWPMondayIntegration {
 	/**
 	 * The unique identifier of this plugin.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @access   protected
 	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
 	 */
@@ -51,7 +51,7 @@ class PlerooWPMondayIntegration {
 	/**
 	 * The current version of the plugin.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @access   protected
 	 * @var      string    $version    The current version of the plugin.
 	 */
@@ -64,13 +64,13 @@ class PlerooWPMondayIntegration {
 	 * Load the dependencies, define the locale, and set the hooks for the admin area and
 	 * the public-facing side of the site.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 */
 	public function __construct() {
 		if ( defined( 'WP_PLUGIN_TEMPLATE_VERSION' ) ) {
 			$this->version = WP_PLUGIN_TEMPLATE_VERSION;
 		} else {
-			$this->version = '0.0.2';
+			$this->version = '';
 		}
 		$this->plugin_name = 'pleroo-wp-monday-integration';
 
@@ -94,7 +94,7 @@ class PlerooWPMondayIntegration {
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @access   private
 	 */
 	private function load_dependencies() {
@@ -132,7 +132,7 @@ class PlerooWPMondayIntegration {
 	 * Uses the Wp_Plugin_Template_i18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @access   private
 	 */
 	private function set_locale() {
@@ -147,7 +147,7 @@ class PlerooWPMondayIntegration {
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
@@ -163,7 +163,7 @@ class PlerooWPMondayIntegration {
 	 * Register all of the hooks related to the public-facing functionality
 	 * of the plugin.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @access   private
 	 */
 	private function define_public_hooks() {
@@ -178,7 +178,7 @@ class PlerooWPMondayIntegration {
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 */
 	public function run() {
 		$this->loader->run();
@@ -188,7 +188,7 @@ class PlerooWPMondayIntegration {
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @return    string    The name of the plugin.
 	 */
 	public function get_plugin_name() {
@@ -198,7 +198,7 @@ class PlerooWPMondayIntegration {
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @return    Wp_Plugin_Template_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
@@ -208,7 +208,7 @@ class PlerooWPMondayIntegration {
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @return    string    The version number of the plugin.
 	 */
 	public function get_version() {

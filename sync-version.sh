@@ -23,39 +23,46 @@ fi
 
 echo "Updating all version numbers to $NEW_VERSION..."
 
-# Get the plugin slug from the main PHP file name
-PLUGIN_SLUG=$(find . -maxdepth 1 -name "*.php" ! -name "index.php" -exec basename {} .php \;)
+# Get the plugin slug from the main PHP file that contains the plugin header
+PLUGIN_SLUG=$(grep -l "Plugin Name:" *.php 2>/dev/null | grep -v "index.php" | grep -v "uninstall.php" | head -n1 | sed 's/\.php$//')
 if [ -z "$PLUGIN_SLUG" ]; then
-    echo "Error: Could not find main plugin file"
+    echo "Error: Could not find main plugin file (looking for file with 'Plugin Name:' header)"
     exit 1
 fi
 
 # Convert slug to underscore format for constants
 UNDERSCORE=$(echo "$PLUGIN_SLUG" | sed 's/-/_/g')
+UNDERSCORE_UPPER=$(echo "$UNDERSCORE" | tr '[:lower:]' '[:upper:]')
 
-# List of files to exclude from version updates
-EXCLUDE_FILES="-not -name 'rename-plugin.sh' -not -name 'sync-version.sh' -not -name '.git*'"
+# Update main plugin file
+if [ -f "$PLUGIN_SLUG.php" ]; then
+    # Update version in plugin header
+    perl -i -pe "s/Version:\s*\d+\.\d+\.\d+/Version:           $NEW_VERSION/" "$PLUGIN_SLUG.php"
+    
+    # Update version constant - exact match to prevent contamination
+    perl -i -pe "s/define\(\s*'PLEROO_WP_MONDAY_INTEGRATION_VERSION',\s*'\d+\.\d+\.\d+'\s*\)/define( 'PLEROO_WP_MONDAY_INTEGRATION_VERSION', '$NEW_VERSION' )/" "$PLUGIN_SLUG.php"
+    
+    # Update @since tags
+    perl -i -pe "s/\@since\s*\d+\.\d+\.\d+/\@since      $NEW_VERSION/" "$PLUGIN_SLUG.php"
+fi
 
-# Update version numbers in PHP files
-find . -type f -name "*.php" -not -name "rename-plugin.sh" -exec perl -pi -e "s/Version:.*[0-9]+\.[0-9]+\.[0-9]+/Version:           $NEW_VERSION/g" {} \;
-find . -type f -name "*.php" -not -name "rename-plugin.sh" -exec perl -pi -e "s/define\( '${UNDERSCORE}_VERSION', '[0-9]+\.[0-9]+\.[0-9]+' \)/define( '${UNDERSCORE}_VERSION', '$NEW_VERSION' )/g" {} \;
-find . -type f -name "*.php" -not -name "rename-plugin.sh" -exec perl -pi -e "s/\@since.*[0-9]+\.[0-9]+\.[0-9]+/\@since      $NEW_VERSION/g" {} \;
-find . -type f -name "*.php" -not -name "rename-plugin.sh" -exec perl -pi -e "s/\$this->version = '[0-9]+\.[0-9]+\.[0-9]+';/\$this->version = '$NEW_VERSION';/g" {} \;
+# Update version in class files
+find . -type f -name "class-*.php" | while read -r file; do
+    perl -i -pe "s/\@since\s*\d+\.\d+\.\d+/\@since      $NEW_VERSION/" "$file"
+    perl -i -pe "s/\\\$this->version\s*=\s*'\d+\.\d+\.\d+'/\\\$this->version = '$NEW_VERSION'/" "$file"
+done
 
 # Update update-info.json
 if [ -f "update-info.json" ]; then
-    # Get the current GitHub URL from the file
-    GITHUB_URL=$(grep -o 'https://github.com/[^"]*' update-info.json | head -1 | sed 's|/releases/.*||')
-    
-    # Update the JSON file
-    cat > update-info.json << EOL
+    # Create JSON with careful formatting
+    cat > update-info.json << JSON
 {
     "new_version": "$NEW_VERSION",
-    "url": "$GITHUB_URL",
-    "package": "$GITHUB_URL/releases/download/v$NEW_VERSION/${PLUGIN_SLUG}.zip",
+    "url": "https://github.com/alecells123/Pleroo-WP-Monday-Integration",
+    "package": "https://github.com/alecells123/Pleroo-WP-Monday-Integration/releases/download/v$NEW_VERSION/$PLUGIN_SLUG.zip",
     "version": "$NEW_VERSION"
 }
-EOL
+JSON
 fi
 
 echo "Version update complete!"

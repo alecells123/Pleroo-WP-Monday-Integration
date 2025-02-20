@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              https://github.com/alecells123
- * @since      0.0.2
+ * @since      0.0.3
  * @package           Pleroo_Wp_Monday_Integration
  *
  * @wordpress-plugin
  * Plugin Name:       Pleroo WP Monday Integration
  * Plugin URI:        https://github.com/alecells123/Pleroo-WP-Monday-Integration
  * Description:       WordPress plugin for integrating Monday.com with WordPress
- * Version:           0.0.2
+ * Version:           0.0.3
  * Author:            Alec Ellsworth
  * Author URI:        https://github.com/alecells123
  * License:           GPL-2.0+
@@ -35,8 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 0.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'uninstall
-pleroo_wp_monday_integration_VERSION', '0.0.2' );
+define( 'PLEROO_WP_MONDAY_INTEGRATION_VERSION', '0.0.3' );
 
 /**
  * The code that runs during plugin activation.
@@ -72,7 +71,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-pleroo-wp-monday-integrati
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since      0.0.2
+ * @since      0.0.3
  */
 function run_pleroo_wp_monday_integration() {
     // Create plugin instance and run it

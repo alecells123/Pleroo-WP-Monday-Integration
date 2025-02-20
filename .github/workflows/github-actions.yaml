@@ -37,16 +37,21 @@ jobs:
 
       - name: Update version numbers
         run: |
-          # Update version in main plugin file header and constant
+          # Update version in main plugin file
           sed -i "s/Version:.*[0-9]\+\.[0-9]\+\.[0-9]\+/Version:           ${{ env.NEW_VERSION }}/" pleroo-wp-monday-integration.php
-          sed -i "s/define( 'PLEROO_WP_MONDAY_INTEGRATION_VERSION', '.*' )/define( 'PLEROO_WP_MONDAY_INTEGRATION_VERSION', '${{ env.NEW_VERSION }}' )/" pleroo-wp-monday-integration.php
+          sed -i "s/define( 'PLEROO_WP_MONDAY_INTEGRATION_VERSION', '[0-9]\+\.[0-9]\+\.[0-9]\+' )/define( 'PLEROO_WP_MONDAY_INTEGRATION_VERSION', '${{ env.NEW_VERSION }}' )/" pleroo-wp-monday-integration.php
           
-          # Update version in class file comments and fallback
-          sed -i "s/@since.*[0-9]\+\.[0-9]\+\.[0-9]\+/@since      ${{ env.NEW_VERSION }}/" includes/class-pleroo-wp-monday-integration.php
-          sed -i "s/\$this->version = '[0-9]\+\.[0-9]\+\.[0-9]\+';/\$this->version = '${{ env.NEW_VERSION }}';/" includes/class-pleroo-wp-monday-integration.php
+          # Update version in class files
+          find includes admin public -name "*.php" -type f -exec sed -i "s/@since.*[0-9]\+\.[0-9]\+\.[0-9]\+/@since      ${{ env.NEW_VERSION }}/g" {} \;
+          find includes admin public -name "*.php" -type f -exec sed -i "s/\$this->version = '[0-9]\+\.[0-9]\+\.[0-9]\+';/\$this->version = '${{ env.NEW_VERSION }}';/g" {} \;
           
-          # Update update-info.json with correct download URL structure
-          jq --arg version "${{ env.NEW_VERSION }}" --arg package "https://github.com/alecells123/Pleroo-WP-Monday-Integration/releases/download/v${{ env.NEW_VERSION }}/pleroo-wp-monday-integration.zip" '.version = $version | .new_version = $version | .package = $package' update-info.json > temp.json && mv temp.json update-info.json
+          # Create update-info.json content
+          echo '{
+            "new_version": "${{ env.NEW_VERSION }}",
+            "url": "https://github.com/alecells123/Pleroo-WP-Monday-Integration",
+            "package": "https://github.com/alecells123/Pleroo-WP-Monday-Integration/releases/download/v${{ env.NEW_VERSION }}/pleroo-wp-monday-integration.zip",
+            "version": "${{ env.NEW_VERSION }}"
+          }' > update-info.json
 
       - name: Create ZIP excluding .distignore files
         run: |

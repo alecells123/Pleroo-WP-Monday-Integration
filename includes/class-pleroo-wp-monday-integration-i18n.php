@@ -7,7 +7,7 @@
  * so that it is ready for translation.
  *
  * @link       https://https://github.com/alecells123
- * @since      0.0.2
+ * @since      
  *
  * @package    Wp_Plugin_Template
  * @subpackage Wp_Plugin_Template/includes
@@ -19,7 +19,7 @@
  * Loads and defines the internationalization files for this plugin
  * so that it is ready for translation.
  *
- * @since      0.0.2
+ * @since      
  * @package    Wp_Plugin_Template
  * @subpackage Wp_Plugin_Template/includes
  * @author     Alec Ellsworth <alecellsworth1@gmail.com>
@@ -30,7 +30,7 @@ class PlerooWPMondayIntegration_i18n {
 	/**
 	 * Load the plugin text domain for translation.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 */
 	public function load_plugin_textdomain() {
 

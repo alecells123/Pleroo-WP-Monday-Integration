@@ -4,7 +4,7 @@
  * The admin-specific functionality of the plugin.
  *
  * @link       https://https://github.com/alecells123
- * @since      0.0.2
+ * @since      
  *
  * @package    Wp_Plugin_Template
  * @subpackage Wp_Plugin_Template/admin
@@ -25,7 +25,7 @@ class PlerooWPMondayIntegration_Admin {
 	/**
 	 * The ID of this plugin.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @access   private
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
@@ -34,7 +34,7 @@ class PlerooWPMondayIntegration_Admin {
 	/**
 	 * The version of this plugin.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @access   private
 	 * @var      string    $version    The current version of this plugin.
 	 */
@@ -43,7 +43,7 @@ class PlerooWPMondayIntegration_Admin {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 * @param      string    $plugin_name       The name of this plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
@@ -59,7 +59,7 @@ class PlerooWPMondayIntegration_Admin {
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 */
 	public function enqueue_styles() {
 
@@ -82,7 +82,7 @@ class PlerooWPMondayIntegration_Admin {
 	/**
 	 * Register the JavaScript for the admin area.
 	 *
-	 * @since      0.0.2
+	 * @since      
 	 */
 	public function enqueue_scripts() {
 
